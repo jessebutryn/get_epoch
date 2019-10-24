@@ -1,0 +1,30 @@
+# This file contains the function that converts the datestamp into an epoch time
+#
+# It takes a single argument in the following format:
+# YYYY-MM-DDTHH:mm:ssZ
+# ie: 2019-03-27T00:00:00Z
+get_epoch () {
+	local d=$1
+	local _year _month _day _hour _minute _second epoch today days_since_epoch seconds_since_epoch
+	local pattern='[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]Z'
+	if ! [[ "$d" =~ $pattern ]]; then
+		printf '%s\n' 'Error: Unknown input date format' >&2
+		exit 1
+	fi
+	_year=$((10#${d:0:4}))
+	_month=$((10#${d:5:2}))
+	_day=$((10#${d:8:2}))
+	_hour=$((10#${d:11:2}))
+	_minute=$((10#${d:14:2}))
+	_second=$((10#${d:17:2}))
+	if  [[ "$_month" -gt 2 ]]; then
+		_month=$((_month+1))
+	else
+		_month=$((_month+13))
+		_year=$((_year-1))
+	fi
+	today=$(( (_year*365) + (_year/4) - (_year/100) + (_year/400) + (_month*306001/10000) + _day ))
+	days_since_epoch=$(( today-719591 ))
+	seconds_since_epoch=$(( (days_since_epoch*86400) + (_hour*3600) + (_minute*60) + _second ))
+	printf '%s\n' "$seconds_since_epoch"
+}
