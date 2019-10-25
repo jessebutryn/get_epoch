@@ -1,6 +1,9 @@
 # get_epoch
 A shell native method of getting the epoch value for a given date stamp
 
+## Note
+This script was written to run on macos with coreutils installed, there are several commands that begin with `g` that will need to have the `g` removed to run on another system.
+
 Test script runs:
 
 1000 tries:
